@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  server:
+    image: jenkins/jenkins:lts
+    ports:
+      - 14000:8080
+      - 14001:50000
+    volumes:
+      - jenkins_volume:/var/jenkins_home
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/bin/docker-compose:/usr/bin/docker-compose
+      - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - proxy:updates.jenkins-ci.org
+    depends_on:
+      - proxy
+    user: root
+    restart: always
+  proxy:
+    image: nginx
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    restart: always
+volumes:
+  jenkins_volume:
